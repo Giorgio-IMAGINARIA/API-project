@@ -8,7 +8,24 @@ router.get('/', function (req, res, next) {
     res.send('respond with a resource');
 });
 router.post('/', function (req, res, next) {
-    if (count(req.body) === 2) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    if (typeof req.body === 'object' && count(req.body) === 2 && 'email' in req.body && 'password' in req.body && typeof req.body.email === 'string' && typeof req.body.password === 'string') {
         // console.log('correct number of properties');
         // console.log('the number of keys is: ', count(req.body));
         // console.log('req.body: ', req.body);
