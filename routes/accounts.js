@@ -3,11 +3,18 @@ var router = express.Router();
 
 function count(obj) { return Object.keys(obj).length; }
 
+
+
+function validateEmail(email) {
+    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(email);
+}
+
 /* GET users listing. */
 router.get('/', function (req, res, next) {
     res.send('respond with a resource');
 });
-router.post('/', function (req, res, next) {
+router.post('/register', function (req, res, next) {
 
 
 
@@ -25,7 +32,7 @@ router.post('/', function (req, res, next) {
 
 
 
-    if (typeof req.body === 'object' && count(req.body) === 2 && 'email' in req.body && 'password' in req.body && typeof req.body.email === 'string' && typeof req.body.password === 'string') {
+    if (typeof req.body === 'object' && count(req.body) === 2 && 'email' in req.body && 'password' in req.body && typeof req.body.email === 'string' && typeof req.body.password === 'string' && validateEmail(req.body.email)) {
         // console.log('correct number of properties');
         // console.log('the number of keys is: ', count(req.body));
         // console.log('req.body: ', req.body);
