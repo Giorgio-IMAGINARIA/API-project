@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+var sendMail = require('../library/sendMail.js');
 
 function count(obj) { return Object.keys(obj).length; }
 
@@ -37,6 +38,7 @@ router.post('/register', function (req, res, next) {
         // console.log('the number of keys is: ', count(req.body));
         // console.log('req.body: ', req.body);
         // res.json({ response: true });
+        sendMail(req.body.email);
         res.status(200).send({
             message: 'Accepted auth POST request',
             objectProcessed: req.body
