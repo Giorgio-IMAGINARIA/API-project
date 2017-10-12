@@ -3,8 +3,8 @@ var nodemailer = require('nodemailer');
 var smtpTransport = nodemailer.createTransport({
     service: 'Gmail',
     auth: {
-        user: "xxxx@gmail.com",
-        pass: "yyyy"
+        user: "testemailimaginaria@gmail.com",
+        pass: "corbusierA1london2014A1"
     }
 });
 
@@ -12,7 +12,7 @@ var sendMail = function (email) {
     console.log('email: ', email);
     var link = "https://www.google.it/";
     var mailOptions = {
-        from: "giorgio[ sg<xxxx@gmail.com>",
+        from: "giorgio[ sg<testemailimaginaria@gmail.com>",
         to: email,
         subject: "Send Email Using Node.js",
         html: "Hello,<br> Please Click on the link to verify your email.<br><a href=" + link + ">Click here to verify</a>"

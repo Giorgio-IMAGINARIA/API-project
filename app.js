@@ -14,6 +14,18 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
+app.use(function (req, res, next) {
+  // use next line in dev 
+  res.header("Access-Control-Allow-Origin", "*");
+
+  // use next lines in prod 
+  // res.header("Access-Control-Allow-Origin", "https://ethervox.gltd.net", "https://reactapi.gltd.net");
+  res.header("Access-Control-Allow-Credentials", "true");
+
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
+
 app.use('/accounts', accounts);
 
 // catch 404 and forward to error handler
