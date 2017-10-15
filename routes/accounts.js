@@ -1,6 +1,9 @@
 var express = require('express');
 var router = express.Router();
 var sendMail = require('../library/sendMail.js');
+var User = require('../models/accountModel');
+
+
 
 function count(obj) { return Object.keys(obj).length; }
 
@@ -17,11 +20,18 @@ router.get('/', function (req, res, next) {
 });
 router.post('/register', function (req, res, next) {
 
+    // User.findOne({ email: req.body.email }, function (err, user) {
+    //     console.log('err: ', err);
+    //     console.log('user: ', user);
+    // });
+
+
+
+    console.log('req.body: ', req.body);
 
 
 
 
-console.log('req.body: ',req.body);
 
 
 
@@ -29,12 +39,32 @@ console.log('req.body: ',req.body);
 
 
 
+    if (
+        typeof req.body === 'object' &&
+        count(req.body) >= 2 &&
+        'email' in req.body &&
+        'password' in req.body &&
+        'callbackurl' in req.body &&
+        typeof req.body.email === 'string' &&
+        typeof req.body.password === 'string' &&
+        typeof req.body.callbackurl === 'string' &&
+        validateEmail(req.body.email)
+    ) {
+        var user = new User();
+        user.email = req.body.email;
 
 
 
+        user.save(function(err) {
+            if (err)
+                res.send(err);
 
-    if (typeof req.body === 'object' && count(req.body) === 2 && 'email' in req.body && 'password' in req.body && typeof req.body.email === 'string' && typeof req.body.password === 'string' && validateEmail(req.body.email)) {
-        sendMail(req.body.email);
+            res.json({ message: 'User created!' });
+        });
+
+
+
+        // sendMail(req.body.email);
         res.status(200).send({
             message: 'Accepted auth POST request',
             objectProcessed: req.body
