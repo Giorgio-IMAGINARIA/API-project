@@ -20,10 +20,17 @@ router.get('/', function (req, res, next) {
 });
 router.post('/register', function (req, res, next) {
 
-    // User.findOne({ email: req.body.email }, function (err, user) {
-    //     console.log('err: ', err);
-    //     console.log('user: ', user);
-    // });
+
+
+
+
+    User.findOne({ email: req.body.email }, function (err, user) {
+        if (err) {
+            console.error(err)
+        } else {
+            console.log(user);
+        };
+    });
 
 
 
@@ -50,17 +57,16 @@ router.post('/register', function (req, res, next) {
         typeof req.body.callbackurl === 'string' &&
         validateEmail(req.body.email)
     ) {
-        var user = new User();
-        user.email = req.body.email;
 
 
+        // var user = new User();
+        // user.email = req.body.email;
+        // user.save(function(err) {
+        //     if (err)
+        //         res.send(err);
 
-        user.save(function(err) {
-            if (err)
-                res.send(err);
-
-            res.json({ message: 'User created!' });
-        });
+        //     res.json({ message: 'User created!' });
+        // });
 
 
 

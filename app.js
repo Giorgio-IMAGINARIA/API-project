@@ -1,21 +1,20 @@
 var User = require('./models/accountModel');
 var mongoose = require('mongoose');
-var mongoUri = 'mongodb://localhost:27017/test-api';
+var mongoDB = 'mongodb://localhost:27017/test-api';
 var mongoOptions = {
   useMongoClient: true
 };
 // mongoose.Promise = global.Promise;
 // assert.equal(query.exec().constructor, global.Promise);
-var mongooseDB = mongoose.connect(mongoUri, mongoOptions);
+mongoose.connect(mongoDB, mongoOptions);
+var db = mongoose.connection;
 // mongoosePromise.then(function (db) {
 //     console.log('db: ', db);
 // });
 
-mongooseDB.once('open', function () {
+db.once('open', function () {
   console.log('MongoDB connected');
-}).on('error', function (err) {
-  console.log(err);
-});
+}).on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 
 
