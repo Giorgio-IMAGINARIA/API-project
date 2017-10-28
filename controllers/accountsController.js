@@ -2,6 +2,8 @@
 var User = require('../models/accountModel');
 var sendMail = require('../library/sendMail.js');
 var User = require('../models/accountModel');
+var Token = require('../models/tokenModel');
+const crypto = require('crypto');
 
 function count(obj) { return Object.keys(obj).length; }
 
@@ -13,23 +15,15 @@ function validateEmail(email) {
 }
 
 // Register a user
-exports.user_register = function(req, res) {
-    
+exports.user_register = function (req, res) {
 
 
 
 
-    User.findOne({ email: req.body.email }, function (err, user) {
-        if (err) {
-            console.error(err)
-        } else {
-            console.log(user);
-        };
-    });
 
 
 
-    console.log('req.body: ', req.body);
+
 
 
 
@@ -54,27 +48,48 @@ exports.user_register = function(req, res) {
     ) {
 
 
-        // var user = new User();
-        // user.email = req.body.email;
-        // user.save(function(err) {
-        //     if (err)
-        //         res.send(err);
-
-        //     res.json({ message: 'User created!' });
-        // });
 
 
 
-        // sendMail(req.body.email);
-        res.status(200).send({
-            message: 'Accepted auth POST request',
-            objectProcessed: req.body
+
+
+        User.findOne({ email: req.body.email }, function (err, user) {
+
+            // Make sure user doesn't already exist
+            // if (user) return res.status(400).send({ msg: 'The email address you have entered is already associated with another account.' });
+            // Create and save the user
+            user = new User({
+                name: req.body.name,
+                surname: req.body.surname,
+                email: req.body.email,
+                password: req.body.password
+            });
+
+            var hash = crypto.createHash('sha256').digest('hex');
+
+            user.save(function (err) {
+                if (err) { return res.status(500).send({ msg: err.message }); }
+                var token = new Token({ _userId: user._id, token: hash });
+                token.save(function (err) {
+                    if (err) { return res.status(500).send({ msg: err.message }); }
+
+                    // Send the email
+                    sendMail(req.body.email);
+                    res.status(200).send({
+                        message: 'Accepted auth POST request',
+                        objectProcessed: req.body
+                    });
+                });
+            });
+
+
+
+        
         });
-
     } else {
         res.status(400).send({ message: 'Malformed auth POST request' });
     };
-};
+}
 
 // Display detail page for a specific Author
 // exports.author_detail = function(req, res) {
