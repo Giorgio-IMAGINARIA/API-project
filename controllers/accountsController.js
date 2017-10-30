@@ -4,91 +4,52 @@ var sendMail = require('../library/sendMail.js');
 var User = require('../models/accountModel');
 var Token = require('../models/tokenModel');
 const crypto = require('crypto');
-
-function count(obj) { return Object.keys(obj).length; }
-
-
-
-function validateEmail(email) {
-    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return re.test(email);
-}
+const { validationResult } = require('express-validator/check');
 
 // Register a user
 exports.user_register = function (req, res) {
+    console.log('req.body: ', req.body);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    if (
-        typeof req.body === 'object' &&
-        count(req.body) >= 2 &&
-        'email' in req.body &&
-        'password' in req.body &&
-        'callbackurl' in req.body &&
-        typeof req.body.email === 'string' &&
-        typeof req.body.password === 'string' &&
-        typeof req.body.callbackurl === 'string' &&
-        validateEmail(req.body.email)
-    ) {
-
-
-
-
-
-
-
-        User.findOne({ email: req.body.email }, function (err, user) {
-
-            // Make sure user doesn't already exist
-            // if (user) return res.status(400).send({ msg: 'The email address you have entered is already associated with another account.' });
-            // Create and save the user
-            user = new User({
-                name: req.body.name,
-                surname: req.body.surname,
-                email: req.body.email,
-                password: req.body.password
-            });
-
-            var hash = crypto.createHash('sha256').digest('hex');
-
-            user.save(function (err) {
-                if (err) { return res.status(500).send({ msg: err.message }); }
-                var token = new Token({ _userId: user._id, token: hash });
-                token.save(function (err) {
-                    if (err) { return res.status(500).send({ msg: err.message }); }
-
-                    // Send the email
-                    sendMail(req.body.email);
-                    res.status(200).send({
-                        message: 'Accepted auth POST request',
-                        objectProcessed: req.body
-                    });
-                });
-            });
-
-
-
-        
-        });
-    } else {
-        res.status(400).send({ message: 'Malformed auth POST request' });
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(422).json({ errors: errors.mapped() });
     };
+
+    User.findOne({ email: req.body.email }, function (err, user) {
+
+        // Make sure user doesn't already exist
+        if (user) return res.status(400).send({ msg: 'The email address you have entered is already associated with another account.' });
+        // Create and save the user
+        user = new User({
+            name: req.body.name,
+            surname: req.body.surname,
+            email: req.body.email,
+            password: req.body.password
+        });
+
+
+        user.save(function (err) {
+            if (err) { return res.status(500).send({ msg: err.message }); }
+            var token = new Token({ _userId: user._id, token: crypto.createHash('sha256').digest('hex') });
+            console.log('token: ', token);
+            token.save(function (err) {
+                if (err) { return res.status(500).send({ msg: err.message }); }
+
+
+                console.log('sendmail: ',sendMail(req.body.email, token));
+                // res.status(200).send({
+                //     message: 'Accepted auth POST request',
+                //     objectProcessed: req.body
+                // });
+
+
+            });
+        });
+
+
+
+
+    });
 }
 
 // Display detail page for a specific Author

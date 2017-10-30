@@ -1,16 +1,13 @@
 var User = require('./models/accountModel');
 var mongoose = require('mongoose');
+// Use native promises
+mongoose.Promise = global.Promise;
 var mongoDB = 'mongodb://localhost:27017/test-api';
 var mongoOptions = {
   useMongoClient: true
 };
-// mongoose.Promise = global.Promise;
-// assert.equal(query.exec().constructor, global.Promise);
 mongoose.connect(mongoDB, mongoOptions);
 var db = mongoose.connection;
-// mongoosePromise.then(function (db) {
-//     console.log('db: ', db);
-// });
 
 db.once('open', function () {
   console.log('MongoDB connected');

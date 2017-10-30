@@ -8,22 +8,23 @@ var smtpTransport = nodemailer.createTransport({
     }
 });
 
-var sendMail = function (email) {
+var sendMail = function (email, token) {
     console.log('email: ', email);
+    console.log('token: ', token);
     var link = "https://www.google.it/";
     var mailOptions = {
         from: "giorgio[ sg<testemailimaginaria@gmail.com>",
         to: email,
-        subject: "Send Email Using Node.js",
+        subject: "Account verification - Test API",
         html: "Hello,<br> Please Click on the link to verify your email.<br><a href=" + link + ">Click here to verify</a>"
     }
 
     console.log(mailOptions);
     smtpTransport.sendMail(mailOptions, function (error, response) {
         if (error) {
-            console.log(error);
+            return error
         } else {
-            console.log(response);
+            return response
         }
     });
 };
