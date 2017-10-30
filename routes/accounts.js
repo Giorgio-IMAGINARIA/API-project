@@ -1,7 +1,6 @@
 var express = require('express');
 var router = express.Router();
 const { check } = require('express-validator/check');
-const { sanitize } = require('express-validator/filter');
 
 // Require controller modules
 var accounts_controller = require('../controllers/accountsController');
