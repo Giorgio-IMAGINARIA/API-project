@@ -35,12 +35,18 @@ exports.user_register = function (req, res) {
             token.save(function (err) {
                 if (err) { return res.status(500).send({ msg: err.message }); }
 
+                sendMail(req.body.email, token).then(() => {
+                    res.status(200).send({
+                        message: 'Accepted auth POST request',
+                        objectProcessed: req.body
+                    });
+                  }).catch((err) => {
+                      console.log('mensolissima');
+                    console.log(err);
+                  });
+
 
                 console.log('sendmail: ',sendMail(req.body.email, token));
-                // res.status(200).send({
-                //     message: 'Accepted auth POST request',
-                //     objectProcessed: req.body
-                // });
 
 
             });
