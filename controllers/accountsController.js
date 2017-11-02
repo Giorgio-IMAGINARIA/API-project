@@ -8,7 +8,7 @@ const { validationResult } = require('express-validator/check');
 
 // Register a user
 exports.user_register = function (req, res) {
-    console.log('req.body: ', req.body);
+    // console.log('req.body: ', req.body);
 
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -16,9 +16,8 @@ exports.user_register = function (req, res) {
     };
 
     User.findOne({ email: req.body.email }, function (err, user) {
-
         // Make sure user doesn't already exist
-        if (user) return res.status(400).send({ msg: 'The email address you have entered is already associated with another account.' });
+        if (user) return res.status(400).send({ message: 'The email address you have entered is already associated with another account.' });
         // Create and save the user
         user = new User({
             name: req.body.name,
@@ -31,30 +30,22 @@ exports.user_register = function (req, res) {
         user.save(function (err) {
             if (err) { return res.status(500).send({ msg: err.message }); }
             var token = new Token({ _userId: user._id, token: crypto.createHash('sha256').digest('hex') });
-            console.log('token: ', token);
+            // console.log('token: ', token);
             token.save(function (err) {
                 if (err) { return res.status(500).send({ msg: err.message }); }
 
-                sendMail(req.body.email, token).then(() => {
+                sendMail(req.body.email, token, req).then((response) => {
+                    // console.log('response: ', response);
                     res.status(200).send({
-                        message: 'Accepted auth POST request',
-                        objectProcessed: req.body
+                        message: 'A verification email has been sent to: ' + req.body.email
                     });
-                  }).catch((err) => {
-                      console.log('mensolissima');
-                    console.log(err);
-                  });
-
-
-                console.log('sendmail: ',sendMail(req.body.email, token));
-
-
+                }).catch((err) => {
+                    res.status(500).send({
+                        message: err.message
+                    });
+                });
             });
         });
-
-
-
-
     });
 }
 
