@@ -49,10 +49,13 @@ exports.user_register = function (req, res) {
     });
 }
 
-// Display detail page for a specific Author
-// exports.author_detail = function(req, res) {
-//     res.send('NOT IMPLEMENTED: Author detail: ' + req.params.id);
-// };
+// Confirm a sent email
+exports.user_confirm = function (req, res) {
+    console.log('mensolissima - req.body: ', req.headers);
+    res.status(200).send({
+        message: 'Test confirmation'
+    });
+};
 
 // Display Author create form on GET
 // exports.author_create_get = function(req, res) {
