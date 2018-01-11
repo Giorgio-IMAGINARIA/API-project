@@ -51,7 +51,8 @@ exports.user_register = function (req, res) {
 
 // Confirm a sent email
 exports.user_confirm = function (req, res) {
-    console.log('mensolissima - req.body: ', req.headers);
+    console.log('req.query.token: ', req.query.token);
+    console.log('req.query.email: ', req.query.email);
     res.status(200).send({
         message: 'Test confirmation'
     });
