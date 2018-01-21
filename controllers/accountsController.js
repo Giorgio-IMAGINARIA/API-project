@@ -1,5 +1,4 @@
 // var Author = require('../models/author');
-var User = require('../models/accountModel');
 var sendMail = require('../library/sendMail.js');
 var User = require('../models/accountModel');
 var Token = require('../models/tokenModel');
@@ -51,12 +50,74 @@ exports.user_register = function (req, res) {
 
 // Confirm a sent email
 exports.user_confirm = function (req, res) {
+    console.log('arrostont');
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.mapped() });
+    };
     console.log('req.query.token: ', req.query.token);
     console.log('req.query.email: ', req.query.email);
+
+
+
+
+
+    Token.findOne({ token: req.query.token }, function (err, token) {
+
+
+
+        if (!token) return res.status(400).send({ type: 'not-verified', msg: 'We were unable to find a valid token. Your token my have expired.' });
+ 
+        // If we found a token, find a matching user
+        User.findOne({ _id: token._userId }, function (err, user) {
+
+
+            if (!user) return res.status(400).send({ msg: 'We were unable to find a user for this token.' });
+
+            if (user.isVerified) return res.status(400).send({ type: 'already-verified', msg: 'This user has already been verified.' });
+            console.log('user: ', user);
+ 
+            // Verify and save the user
+            // user.isVerified = true;
+            // user.save(function (err) {
+            //     if (err) { return res.status(500).send({ msg: err.message }); }
+            //     res.status(200).send("The account has been verified. Please log in.");
+            // });
+
+
+        });
+    });
+
+
+
+
+
     res.status(200).send({
         message: 'Test confirmation'
     });
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // Display Author create form on GET
 // exports.author_create_get = function(req, res) {
